@@ -483,3 +483,74 @@ another season and see the capsules ripen.</p>
     html: readFileSync(new URL('../fixtures/escape.html', import.meta.url), 'utf8'),
   },
 ];
+
+// An hour of browsing (19:00–20:00 on 31 Oct 2026). Each session is one tab: the seed replays it against a
+// back/forward stack, so `back`/`forward` land where a browser would, and a `link` must exist on the page it's clicked on.
+// Steps: 'typed <addr>', 'link <addr>', 'search <addr>', 'history <addr>', 'back', 'forward'.
+export type Session = { personId: string; startMinute: number; steps: string[] };
+
+export const SESSIONS: Session[] = [
+  {
+    // Wren has been nearly everywhere, including every address that leads nowhere.
+    personId: 'wren',
+    startMinute: 0,
+    steps: [
+      'typed fieldguide.zz',
+      'link tidepool.zz',
+      'link tidetables.zz',
+      'back',
+      'link saltmarsh.zz',
+      'link moss.zz',
+      'link allotment.zz',
+      'link birdcount.zz',
+      'link owl.zz',
+      'back',
+      'back',
+      'forward',
+      'link saltmarsh.zz',
+      'link tidepool.zz',
+      'link nightbus.zz',
+      'link clockwork.zz',
+      'link letterpress.zz',
+      'link papermill.zz',
+      'back',
+      'link fieldguide.zz',
+      'link lighthouse.zz',
+      'back',
+      'link ferment.zz',
+      'link nightbus.zz',
+      'typed escape.zz',
+      'history fieldguide.zz',
+    ],
+  },
+  { personId: 'pim', startMinute: 2, steps: ['typed ferment.zz', 'link nightbus.zz', 'back', 'link allotment.zz', 'link ferment.zz'] },
+  {
+    // Sol's long trail: ten pages without turning back.
+    personId: 'sol',
+    startMinute: 5,
+    steps: [
+      'typed allotment.zz',
+      'link ferment.zz',
+      'link nightbus.zz',
+      'link clockwork.zz',
+      'link letterpress.zz',
+      'link fieldguide.zz',
+      'link moss.zz',
+      'link saltmarsh.zz',
+      'link birdcount.zz',
+      'link allotment.zz',
+    ],
+  },
+  {
+    personId: 'odile',
+    startMinute: 10,
+    steps: ['typed birdcount.zz', 'link saltmarsh.zz', 'link tidepool.zz', 'back', 'back', 'forward', 'search nightbus.zz', 'link tidepool.zz'],
+  },
+  {
+    personId: 'teo',
+    startMinute: 20,
+    steps: ['typed letterpress.zz', 'link clockwork.zz', 'link nightbus.zz', 'back', 'link letterpress.zz', 'link papermill.zz', 'back', 'typed escape.zz'],
+  },
+  { personId: 'pim', startMinute: 30, steps: ['typed ferment.zz', 'link nightbus.zz', 'link ferment.zz', 'typed ferment.zz'] },
+  { personId: 'pim', startMinute: 50, steps: ['typed ferment.zz', 'search allotment.zz', 'link ferment.zz'] },
+];
