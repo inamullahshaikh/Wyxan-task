@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PeopleController } from './people.controller.js';
 import { Person, PersonSchema, Site, SiteSchema, Visit, VisitSchema } from './schemas.js';
+import { SitesController } from './sites.controller.js';
 
 @Module({
   imports: [
@@ -12,6 +13,6 @@ import { Person, PersonSchema, Site, SiteSchema, Visit, VisitSchema } from './sc
       { name: Visit.name, schema: VisitSchema },
     ]),
   ],
-  controllers: [PeopleController],
+  controllers: [PeopleController, SitesController],
 })
 export class AppModule {}
