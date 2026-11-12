@@ -8,6 +8,7 @@ import {
   Param,
   PayloadTooLargeException,
   Post,
+  Query,
   Res,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -17,6 +18,7 @@ import { Model } from 'mongoose';
 import { toAddress } from './address.js';
 import { sanitize } from './sanitize.js';
 import { Person, Site } from './schemas.js';
+import { snippet } from './snippet.js';
 
 const MAX_HTML_BYTES = 64 * 1024;
 
@@ -37,21 +39,28 @@ class PublishDto {
   authorId: string;
 }
 
-@Controller('sites')
+class SearchQuery {
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(200)
+  q: string;
+}
+
+@Controller()
 export class SitesController {
   constructor(
     @InjectModel(Site.name) private readonly sites: Model<Site>,
     @InjectModel(Person.name) private readonly people: Model<Person>,
   ) {}
 
-  @Get()
+  @Get('sites')
   async list() {
     const sites = await this.sites.find({}, { title: 1, authorId: 1 }).sort({ _id: 1 }).lean();
     const author = await this.authors(sites.map((s) => s.authorId));
     return sites.map((s) => ({ address: s._id, title: s.title, author: author(s.authorId) }));
   }
 
-  @Get(':address')
+  @Get('sites/:address')
   async get(@Param('address') raw: string) {
     const address = toAddress(raw);
     const site = address && (await this.sites.findById(address, { title: 1, html: 1, authorId: 1 }).lean());
@@ -61,7 +70,25 @@ export class SitesController {
   }
 
   /** Create (201), republish your own (200), or someone else's address (409). */
-  @Post()
+  /** Ranked by Mongo's textScore: title weighs 10× body, English stemming, "phrases" and -negation. */
+  // ponytail: $text has no typo tolerance or prefix match; Atlas Search is the upgrade.
+  @Get('search')
+  async search(@Query() { q }: SearchQuery) {
+    const hits = await this.sites
+      .find({ $text: { $search: q } }, { score: { $meta: 'textScore' }, title: 1, text: 1, authorId: 1 })
+      .sort({ score: { $meta: 'textScore' } })
+      .limit(20)
+      .lean();
+    const author = await this.authors(hits.map((h) => h.authorId));
+    return hits.map((h) => ({
+      address: h._id,
+      title: h.title,
+      author: author(h.authorId),
+      snippet: snippet(h.text, q),
+    }));
+  }
+
+  @Post('sites')
   async publish(@Body() dto: PublishDto, @Res({ passthrough: true }) res: Response) {
     const address = toAddress(dto.address);
     if (!address) throw new BadRequestException('address must look like name.zz');
