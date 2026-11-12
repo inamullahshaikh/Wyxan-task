@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+
 // The small web as it exists before anyone publishes. Invented people, invented places.
 // Addresses linked but never defined here lead Nowhere on purpose:
 // lighthouse.zz, tidetables.zz, owl.zz, papermill.zz.
@@ -471,5 +473,13 @@ another season and see the capsules ripen.</p>
 <aside>Found this page from somewhere else? There is a list of everything on this small web at
 <a href="fieldguide.zz">the field guide</a>.</aside>`,
     ),
+  },
+  {
+    // The containment test: every escape attempt we know of, published like any other page.
+    // Same file as sanitize.spec.ts uses; nest-cli.json copies it next to the compiled seed.
+    address: 'escape.zz',
+    title: 'Try to escape',
+    authorId: 'pim',
+    html: readFileSync(new URL('../fixtures/escape.html', import.meta.url), 'utf8'),
   },
 ];
